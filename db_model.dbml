@@ -1,8 +1,19 @@
 // only includes basic features for now
-// edge case to consider: what happens to the past services provided by a removed provider account?
-// does a customer make a service request to a specific provider or to all?
+// TODO: Look into how referential integrity can be represented in dbml
 
-Table user {
+Table provider {
+  id integer [pk, not null]
+  email varchar [not null]
+  password varchar [not null]
+  first_name varchar [not null]
+  last_name varchar
+  description varchar [not null]
+  address varchar [not null]
+  is_approved boolean [not null, default: false]
+  is_available boolean [not null, default: false]
+}
+
+Table customer {
   id integer [pk, not null]
   email varchar [not null]
   password varchar [not null]
@@ -10,46 +21,64 @@ Table user {
   last_name varchar
 }
 
-Table provider {
-    id integer [pk, not null]
-    user_id integer [not null, unique, ref: > user.id]
-    description varchar [not null]
-    address varchar [not null]
-    is_approved boolean [not null, default: '0']
-}
-
-Table customer {
-    id integer [pk, not null]
-    user_id integer [not null, unique, ref: > user.id]
-}
-
 Table service {
-    id integer [pk, not null]
-    title varchar [not null]
-    description varchar [not null]
-    provider_id integer [ref: > provider.id]
-    price decimal(6, 2) [note: 'we assume currency is GBP']
-    area varchar [note: 'geographical areas']
-    availability varchar [note: 'eg. weekdays, 24/7']
-    category service_category_title [not null]
-    }
+  id integer [pk, not null]
+  title varchar [not null]
+  description varchar [not null]
+  provider_id integer [ref: > provider.id]
+  price decimal(6, 2) [note: 'we assume currency is GBP']
+  area varchar [note: 'city']
+  availability varchar [note: 'eg. weekdays, 24/7']
+  category service_category_title [not null]
+  is_available boolean [not null, default: false]
+}
 
 Table service_request {
-    id integer [pk, not null]
-    service_category service_category_title [not null]
-    description varchar [not null]
-    provider_id integer [ref: > provider.id, note: 'This provider must be an approved provider']
-    customer_id integer [ref: > customer.id]
-    customer_address varchar [not null]
-    booking_time datetime [not null]
-    status service_request_status [not null]
+  id integer [pk, not null]
+  service_category service_category_title [not null]
+  description varchar [not null]
+  provider_id integer [ref: > provider.id, note: 'This provider must be an approved provider']
+  customer_id integer [ref: > customer.id]
+  customer_address varchar [not null]
+  booking_time datetime [not null]
+  status service_request_status [not null]
 }
 
 Table review {
   id integer [pk, not null]
+  service_id integer [ref: > service.id]
+  customer_id integer [ref: > customer.id]
   rating integer [not null, note: 'from 1 to 5']
   title varchar
   description varchar
+}
+
+Table profile_update {
+  id integer [pk, not null]
+  provider_id integer [ref: > provider.id]
+  reason varchar [not null]
+  status update_status [not null]
+}
+
+Table service_request_update {
+  id integer [pk, not null]
+  service_request_id integer [ref: > service_request.id]
+  reason varchar [not null]
+  status update_status [not null]
+}
+
+Table notification {
+  id integer [pk, not null]
+  customer_id integer [ref: > customer.id]
+  service_id integer [ref: > service.id]
+  text varchar [not null]
+  date timestamp [not null]
+  read boolean [not null, default: false]
+}
+
+Enum update_status {
+  pending
+  completed
 }
 
 Enum service_request_status {
@@ -61,17 +90,17 @@ Enum service_request_status {
 }
 
 Enum service_category_title {
-        cleaning
-        babysitting
-        pest_control
-        plumbing
-        electrical_repairs
-        beauty
-        other
-    }
+  cleaning
+  babysitting
+  pest_control
+  plumbing
+  electrical_repairs
+  beauty
+  other
+}
 
 Table photo {
-    id integer [pk, not null]
-    service_id integer [ref: > service.id]
-    file_path varchar [not null, unique]
+  id integer [pk, not null]
+  service_id integer [ref: > service.id]
+  file_path varchar [not null, unique]
 }
