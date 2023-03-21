@@ -12,9 +12,7 @@ const providerRoute = require('./routes/provider/provider');
 const app = express();
 
 // App middleware
-app.use(cors({
-  origin: process.env.CORS_ORIGIN 
-}));
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
