@@ -1,6 +1,7 @@
 // Require dependencies
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const helmet = require('helmet');
 
 // Require Middleware
@@ -11,6 +12,9 @@ const providerRoute = require('./routes/provider/provider');
 const app = express();
 
 // App middleware
+app.use(cors({
+  origin: process.env.CORS_ORIGIN 
+}));
 app.use(helmet());
 app.use(express.json());
 
