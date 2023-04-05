@@ -7,6 +7,8 @@ const helmet = require('helmet');
 // Require Middleware
 const middlewares = require('./middlewares');
 const providerRoute = require('./routes/provider/provider');
+const customerRoute = require('./routes/customer/customer');
+const adminRoute = require('./routes/admin/admin');
 
 // Create app
 const app = express();
@@ -24,6 +26,8 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/provider', providerRoute);
+app.use('/customer', customerRoute);
+app.use('/admin', adminRoute);
 
 // Error handling middleware
 app.use(middlewares.errorHandler);
