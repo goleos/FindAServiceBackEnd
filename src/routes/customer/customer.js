@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const { authenticateToken } = require('../../middlewares');
 const { PROFILE_IMAGE } = require('../../helpers/contants');
 const { normalMsg, loginMsg } = require('../../helpers/returnMsg');
+const { OAuth2Client } = require('google-auth-library');
 
 // Register a new provider
 router.post('/register', async (req, res, next) => {
@@ -99,6 +100,62 @@ router.post('/login', async (req, res, next) => {
       return loginMsg(res, 401, false, "Invalid credentials", false);
     }
   });
+});
+
+// Sign a user in with Google
+router.post('/googleLogin', async (req, res, next) => {
+  const { clientId, credential } = req.body;
+
+  if (!credential) {
+    return loginMsg(res, 400, false, "Bad Request", false);
+  }
+
+  // Verify the credentials came from google and decode them
+  const client = new OAuth2Client(clientId);
+  const ticket = await client.verifyIdToken({
+    idToken: credential,
+    audience: clientId,
+  });
+
+  // Get the user information
+  const userInfo = ticket.getPayload();
+  
+  // Check email exists in db
+  try {
+    const data = await pool.query(
+      'SELECT id FROM customer WHERE customer.email = $1',
+      [userInfo.email]);
+
+    let userId = null
+
+    // Add user to db or update their information
+    if (data.rows.length === 0) {
+      const newUser = await pool.query(
+        'INSERT INTO customer (email, google_sub, first_name, last_name, profile_image) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+        [userInfo.email, userInfo.sub, userInfo.given_name, userInfo.family_name, userInfo.picture]);
+      
+      userId = newUser.rows[0].id
+    } else {
+      
+      userId = data.rows[0].id
+
+      await pool.query(
+        'UPDATE customer SET email = $1, google_sub = $2, first_name = $3, last_name = $4, profile_image = $5 WHERE id = $6',
+        [userInfo.email, userInfo.sub, userInfo.given_name, userInfo.family_name, userInfo.picture, userId]);
+    }
+
+    const token = jwt.sign(
+      { id: userId, status: "customer" },
+      process.env.TOKEN_SECRET
+    );
+    return loginMsg(res, 200, true, "OK", token);
+    
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+
+  
 });
 
 // Get information about the current authenticated provider
