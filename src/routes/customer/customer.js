@@ -8,6 +8,9 @@ const { authenticateToken } = require('../../middlewares');
 const { PROFILE_IMAGE } = require('../../helpers/contants');
 const { normalMsg, loginMsg } = require('../../helpers/returnMsg');
 const { OAuth2Client } = require('google-auth-library');
+const sendEmail = require("../../config/emailConfig");
+const crypto = require("crypto");
+const draftEmail = require("../../helpers/draftEmail")
 
 // Register a new provider
 router.post('/register', async (req, res, next) => {
@@ -48,9 +51,20 @@ router.post('/register', async (req, res, next) => {
 
     // Add user to PostgreSQL
     try {
-      await pool.query(
-        'INSERT INTO customer (email, password, first_name, last_name, profile_image) VALUES ($1, $2, $3, $4, $5)',
-        [email, hash, firstName, lastName, PROFILE_IMAGE]);
+      
+      // Add token
+      const emailToken = crypto.randomBytes(32).toString("hex")
+
+      const newUser = await pool.query(
+         'INSERT INTO customer (email, password, first_name, last_name, profile_image, email_verified, email_token) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        [email, hash, firstName, lastName, PROFILE_IMAGE, false, emailToken]);
+
+      // Send message
+      const verificationLink = `${process.env.BASE_URL}/customer/verify/${newUser.rows[0].id}/${emailToken}`
+
+      const emailMessage = draftEmail(firstName, verificationLink)
+
+      await sendEmail(email, "Verify Email", emailMessage);
 
       return normalMsg(res, 201, true, "OK");
     } catch (err) {
@@ -58,6 +72,36 @@ router.post('/register', async (req, res, next) => {
       next(err)
     }
   });
+
+  
+});
+
+// Accessed from the email
+router.get("/verify/:customerId/:token", async (req, res, next) => {
+  const { customerId, token } = req.params;
+
+  try {
+    // if (!token) return res.status(400).send("Invalid link");
+
+    const data = await pool.query(
+      'SELECT id FROM customer WHERE id = $1 AND email_token = $2',
+      [customerId, token]);
+
+    if (data.rows.length === 0) {
+      return loginMsg(res, 400, false, "Invalid credentials", false);
+    }
+
+    // Set verify to true
+    await pool.query(
+      'UPDATE customer SET email_verified = $1 WHERE id = $2',
+      [true, customerId]
+    )
+
+    return normalMsg(res, 201, true, "Email verified successfully");
+  } catch (err) {
+    res.status(500);
+    next(err)
+  }
 });
 
 // Login a user
@@ -131,8 +175,8 @@ router.post('/googleLogin', async (req, res, next) => {
     // Add user to db or update their information
     if (data.rows.length === 0) {
       const newUser = await pool.query(
-        'INSERT INTO customer (email, google_sub, first_name, last_name, profile_image) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [userInfo.email, userInfo.sub, userInfo.given_name, userInfo.family_name, userInfo.picture]);
+        'INSERT INTO customer (email, google_sub, first_name, last_name, profile_image, email_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+        [userInfo.email, userInfo.sub, userInfo.given_name, userInfo.family_name, userInfo.picture, true]);
       
       userId = newUser.rows[0].id
     } else {
