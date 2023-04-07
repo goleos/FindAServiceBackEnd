@@ -11,14 +11,19 @@ Table provider {
   address varchar [not null]
   is_approved boolean [not null, default: false]
   is_available boolean [not null, default: false]
+  profile_image varchar
 }
 
 Table customer {
   id integer [pk, not null]
   email varchar [not null]
-  password varchar [not null]
+  password varchar 
   first_name varchar [not null]
   last_name varchar
+  google_sub varchar
+  profile_image varchar
+  email_verified boolean [default: false]
+  email_token varchar
 }
 
 Table service {
