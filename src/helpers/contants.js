@@ -1,3 +1,2 @@
-// Image taken from Freepick
-// https://www.freepik.com/vectors/people-profile
-const PROFILE_IMAGE = "";
+// Image taken from Flaticon
+const PROFILE_IMAGE = "https://findaservice.blob.core.windows.net/app/user.png";
