@@ -8,6 +8,8 @@ const { authenticateToken } = require('../../middlewares');
 const { PROFILE_IMAGE } = require('../../helpers/contants');
 const { normalMsg, loginMsg } = require('../../helpers/returnMsg');
 
+const providerIdRoute = require('./providerId');
+
 // Register a new provider
 router.post('/register', async (req, res, next) => {
   const {
@@ -19,6 +21,8 @@ router.post('/register', async (req, res, next) => {
     description,
     address
   } = req.body;
+
+  console.log(PROFILE_IMAGE);
 
   // Check passwords match
   if (password !== confirmPassword) {
@@ -61,7 +65,7 @@ router.post('/register', async (req, res, next) => {
   });
 });
 
-// Login a user
+// Login a provider
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -113,7 +117,7 @@ router.get('/currentProvider', authenticateToken, async (req, res, next) => {
 
   try {
     const data = await pool.query(
-      'SELECT id, first_name AS "firstName", last_name AS "lastName", email, profile_image AS "profileImage", description, address FROM provider WHERE provider.id = $1',
+      'SELECT id, first_name AS "firstName", last_name AS "lastName", email, profile_image AS "profileImage", description, address, is_approved AS "isApproved" FROM provider WHERE provider.id = $1',
       [user.id]
     );
     return res.status(200).json(data.rows[0]);
@@ -122,5 +126,51 @@ router.get('/currentProvider', authenticateToken, async (req, res, next) => {
     next(err);
   }
 });
+
+// Get unapproved providers
+router.get('/unapproved', authenticateToken, async (req, res, next) => {
+  const user = req.user;
+
+  if (user.status !== 'admin') {
+    return normalMsg(res, 400, false, "Unauthorised to make this request");
+  }
+
+  try {
+    const providerData = await pool.query(
+      'SELECT id, first_name AS "firstName", last_name AS "lastName", email, description, address, profile_image AS "profileImage" FROM provider WHERE is_approved = false AND is_available = true;',
+    );
+
+    // Get status (toReview or pending)
+    // toReview => no pending profile updates
+    // pending => 1 pending profile update
+    let data = []
+
+    for (const row of providerData.rows) {
+      const provider = row;
+      provider.status = "pending";
+
+      const updateData = await pool.query(
+        "SELECT id FROM profile_update WHERE provider_id = $1 AND status = $2",
+        [provider.id, 'pending']
+      );
+
+      // No pending updates
+      if (updateData.rows.length === 0) {
+        provider.status = "toReview";
+      }
+
+      data.push(provider);
+    }
+
+    return res.status(200).json(data);
+  } catch (err) {
+    res.status(500);
+    next(err)
+  }
+
+});
+
+// Routes for a specific provider id
+router.use('/:providerId', providerIdRoute)
 
 module.exports = router;

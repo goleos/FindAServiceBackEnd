@@ -12,7 +12,7 @@ const sendEmail = require("../../config/emailConfig");
 const crypto = require("crypto");
 const draftEmail = require("../../helpers/draftEmail")
 
-// Register a new provider
+// Register a new customer
 router.post('/register', async (req, res, next) => {
   const {
     email,
@@ -104,7 +104,7 @@ router.get("/verify/:customerId/:token", async (req, res, next) => {
   }
 });
 
-// Login a user
+// Login a customer
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -202,7 +202,7 @@ router.post('/googleLogin', async (req, res, next) => {
   
 });
 
-// Get information about the current authenticated provider
+// Get information about the current authenticated customer
 router.get('/currentCustomer', authenticateToken, async (req, res, next) => {
   const user = req.user;
 

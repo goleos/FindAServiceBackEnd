@@ -9,6 +9,8 @@ const middlewares = require('./middlewares');
 const providerRoute = require('./routes/provider/provider');
 const customerRoute = require('./routes/customer/customer');
 const adminRoute = require('./routes/admin/admin');
+const profileUpdateRoute = require('./routes/profileUpdate/profileUpdate');
+
 
 // Create app
 const app = express();
@@ -28,6 +30,8 @@ app.get('/', (req, res) => {
 app.use('/provider', providerRoute);
 app.use('/customer', customerRoute);
 app.use('/admin', adminRoute);
+app.use('/profile_update', profileUpdateRoute);
+
 
 // Error handling middleware
 app.use(middlewares.errorHandler);
