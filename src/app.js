@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 app.use('/provider', providerRoute);
 app.use('/customer', customerRoute);
 app.use('/admin', adminRoute);
-app.use('/profile_update', profileUpdateRoute);
+app.use('/profile-update', profileUpdateRoute);
 
 
 // Error handling middleware
