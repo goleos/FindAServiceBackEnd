@@ -63,6 +63,7 @@ Table profile_update {
   provider_id integer [ref: > provider.id]
   reason varchar [not null]
   status update_status [not null]
+  created_at timestamp [not null]
 }
 
 Table service_request_update {

@@ -1,14 +1,11 @@
 // /admin
 require('dotenv').config();
 const router = require('express').Router();
-const bcrypt = require('bcrypt');
-const { pool } = require('../../config/postgresConfig');
 const jwt = require('jsonwebtoken');
-const { authenticateToken } = require('../../middlewares');
-const { PROFILE_IMAGE } = require('../../helpers/contants');
-const { normalMsg, loginMsg } = require('../../helpers/returnMsg');
+const { loginMsg } = require('../../helpers/returnMsg');
+const { pool } = require('../../config/postgresConfig');
 
-// Login a user
+// Login the admin
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
 
