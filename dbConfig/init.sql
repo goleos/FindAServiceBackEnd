@@ -13,7 +13,7 @@ CREATE TABLE provider (
 , profile_image VARCHAR(255)
 );
 
-CREATE TABLE customer (
+CREATE TABLE IF NOT EXISTS customer (
   id SERIAL PRIMARY KEY
 , first_name VARCHAR(255) NOT NULL
 , last_name VARCHAR(255) NOT NULL
@@ -26,6 +26,31 @@ CREATE TABLE customer (
 );
 
 
+CREATE TYPE service_category_name AS ENUM (
+  'Cleaning',
+  'Babysitting',
+  'Pest Control',
+  'Plumbing',
+  'Electrical Repairs',
+  'Beauty',
+  'Miscellaneous'
+);
+
+CREATE TABLE IF NOT EXISTS service (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(70) NOT NULL,
+  description TEXT NOT NULL,
+  provider_id INTEGER NOT NULL,
+  price NUMERIC(6, 2)  NOT NULL,
+  areas_covered VARCHAR(200)[],
+  availability VARCHAR(100)[],
+  category service_category_name NOT NULL,
+  is_available BOOLEAN DEFAULT false,
+  CONSTRAINT fk_provider
+    FOREIGN KEY (provider_id)
+      REFERENCES provider (id)
+);
+
 CREATE TABLE  profile_update (
   id SERIAL PRIMARY KEY
 , provider_id INT REFERENCES provider (id) 
@@ -35,4 +60,3 @@ CREATE TABLE  profile_update (
 , status update_status NOT NULL,
 , created_at TIMESTAMPTZ NOT NULL
 )
-
