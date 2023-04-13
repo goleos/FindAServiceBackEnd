@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS service (
   title VARCHAR(70) NOT NULL,
   description TEXT NOT NULL,
   provider_id INTEGER NOT NULL,
-  price MONEY NOT NULL,
+  price NUMERIC(6, 2)  NOT NULL,
   areas_covered VARCHAR(200)[],
   availability VARCHAR(100)[],
   category service_category_name NOT NULL,
