@@ -3,7 +3,7 @@ const { pool } = require("../../config/postgresConfig");
 require("dotenv").config();
 const router = require("express").Router();
 
-// Get services of the current provider
+// Searching for services based on provider, category or area
 router.get("/services", authenticateToken, async (req, res, next) => {
   // const user = req.user;
   const body = req.body;
@@ -36,6 +36,7 @@ router.get("/services", authenticateToken, async (req, res, next) => {
   }
 });
 
+// creating a service by provider. Note that it has to be then approved by admin.
 router.post("/create", authenticateToken, async (req, res, next) => {
   const user = req.user;
 
