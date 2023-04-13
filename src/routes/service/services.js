@@ -6,28 +6,28 @@ const router = require("express").Router();
 // Searching for services based on provider, category or area
 router.get("/services", authenticateToken, async (req, res, next) => {
   // const user = req.user;
-  const body = req.body;
+  const parameters = req.query;
 
   let sqlQuery =
     'SELECT id, title, provider_id AS "providerID", description, price, areas_covered AS "areasCovered", availability, category, is_available AS "isAvailable"' +
     " FROM service";
 
-  if(body.area || body.provider || body.category) {
+  if(parameters.area || parameters.provider || parameters.category) {
     sqlQuery += ' WHERE '
   }
 
-  if (body.provider) {
-    sqlQuery += ` service.provider_id = '${body.provider}'`;
+  if (parameters.provider) {
+    sqlQuery += ` service.provider_id = '${parameters.provider}'`;
   }
 
-  if (body.category) {
-    sqlQuery += ` AND category = '${body.category}'`;
+  if (parameters.category) {
+    sqlQuery += ` AND category = '${parameters.category}'`;
   }
 
   // how to check value is present in an array:
   // https://stackoverflow.com/questions/39643454/postgres-check-if-array-field-contains-value
-  if (body.area) {
-    sqlQuery += ` AND '${body.area}' = ANY(service.areas_covered)`;
+  if (parameters.area) {
+    sqlQuery += ` AND '${parameters.area}' = ANY(service.areas_covered)`;
   }
 
   try {
