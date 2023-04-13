@@ -10,7 +10,11 @@ router.get("/services", authenticateToken, async (req, res, next) => {
 
   let sqlQuery =
     'SELECT id, title, provider_id AS "providerID", description, price, areas_covered AS "areasCovered", availability, category, is_available AS "isAvailable"' +
-    " FROM service" + ' WHERE ';
+    " FROM service";
+
+  if(body.area || body.provider || body.category) {
+    sqlQuery += ' WHERE '
+  }
 
   if (body.provider) {
     sqlQuery += ` service.provider_id = '${body.provider}'`;
