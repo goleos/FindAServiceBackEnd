@@ -3,6 +3,8 @@ const { pool } = require("../../config/postgresConfig");
 require("dotenv").config();
 const router = require("express").Router();
 
+const serviceIdRoute = require('./serviceId');
+
 // Searching for services based on provider, category or area
 router.get("/services", authenticateToken, async (req, res, next) => {
   // const user = req.user;
@@ -70,5 +72,8 @@ router.post("/create", authenticateToken, async (req, res, next) => {
     next(err);
   }
 });
+
+// Routes for a specific service id
+router.use('/:serviceId', serviceIdRoute)
 
 module.exports = router;

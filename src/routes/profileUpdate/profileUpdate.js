@@ -1,12 +1,12 @@
-// /profile-update
+// /profileUpdate
 require('dotenv').config();
 const router = require('express').Router();
 const { authenticateToken } = require('../../middlewares');
 const { pool } = require('../../config/postgresConfig');
 const { normalMsg } = require('../../helpers/returnMsg');
 
-// Request a profile update to a provider
-router.put('/:updateId/change-status', authenticateToken, async (req, res, next) => {
+// Mark a request as completed
+router.put('/:updateId/changeStatus', authenticateToken, async (req, res, next) => {
   const { updateId } = req.params;
   const user = req.user;
 

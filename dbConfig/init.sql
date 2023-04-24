@@ -36,6 +36,14 @@ CREATE TYPE service_category_name AS ENUM (
   'Miscellaneous'
 );
 
+CREATE TYPE service_request_status AS ENUM (
+  'accepted',
+  'request_further_details',
+  'rejected',
+  'pending',
+  'completed'
+);
+
 CREATE TABLE IF NOT EXISTS service (
   id SERIAL PRIMARY KEY,
   title VARCHAR(70) NOT NULL,
@@ -45,7 +53,7 @@ CREATE TABLE IF NOT EXISTS service (
   areas_covered VARCHAR(200)[],
   availability VARCHAR(100)[],
   category service_category_name NOT NULL,
-  is_available BOOLEAN DEFAULT false,
+  is_available BOOLEAN DEFAULT true,
   CONSTRAINT fk_provider
     FOREIGN KEY (provider_id)
       REFERENCES provider (id)
@@ -57,6 +65,34 @@ CREATE TABLE  profile_update (
     ON UPDATE CASCADE 
     ON DELETE CASCADE
 , reason VARCHAR(255) NOT NULL
-, status update_status NOT NULL,
+, status update_status NOT NULL
+, created_at TIMESTAMPTZ NOT NULL
+)
+
+CREATE TABLE  service_request (
+  id SERIAL PRIMARY KEY
+, provider_id INT REFERENCES provider (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, customer_id INT REFERENCES customer (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, service_id INT REFERENCES service (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, description VARCHAR(255) NOT NULL
+, status service_request_status NOT NULL
+, customer_address VARCHAR(255) NOT NULL
+, booking_time DATE NOT NULL
+, created_at TIMESTAMPTZ NOT NULL
+)
+
+CREATE TABLE  service_request_update (
+  id SERIAL PRIMARY KEY
+, service_request_id INT REFERENCES service_request (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, reason VARCHAR(255) NOT NULL
+, status update_status NOT NULL
 , created_at TIMESTAMPTZ NOT NULL
 )

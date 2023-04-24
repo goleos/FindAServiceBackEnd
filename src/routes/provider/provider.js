@@ -170,7 +170,7 @@ router.get('/unapproved', authenticateToken, async (req, res, next) => {
 });
 
 // Get a provider
-router.put('/edit-profile', authenticateToken, async (req, res, next) => {
+router.put('/editProfile', authenticateToken, async (req, res, next) => {
 
   const user = req.user;
 
