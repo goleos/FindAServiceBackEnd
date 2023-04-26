@@ -128,7 +128,7 @@ router.delete("/delete", authenticateToken, async (req, res, next) => {
     return res.status(401).json({ status: false, message: "Unauthorised" });
   }
 
-  let sqlQuery = `DELETE FROM public.service WHERE id = ${parameters.service_id}`;
+  let sqlQuery = `UPDATE public.service SET is_available = false WHERE id = ${parameters.service_id}`;
 
   try {
     await pool.query(sqlQuery);
