@@ -42,7 +42,7 @@ router.get("/services", authenticateToken, async (req, res, next) => {
   }
 });
 
-// creating a service by provider. Note that it has to be then approved by admin.
+// creating a service by provider.
 router.post("/create", authenticateToken, async (req, res, next) => {
   const user = req.user;
 
@@ -72,6 +72,45 @@ router.post("/create", authenticateToken, async (req, res, next) => {
     next(err);
   }
 });
+
+router.post("/update", authenticateToken, async (req, res, next) => {
+  const user = req.user;
+  const body = req.body;
+  const parameters = req.query;
+
+  if (!parameters.service_id) {
+    return res.status(400).json({ status: false, message: "You didn't use the 'service_id' parameter" });
+  }
+
+  //Todo: check that this service is actually owned by the provider
+
+  if (user.status !== 'provider') {
+    return res.status(401).json({ status: false, message: "Unauthorised" });
+  }
+
+  let sqlQuery = `UPDATE public.service 
+SET 
+title =  '${body.title}', 
+description =  '${body.description}',
+price =  ${body.price},
+areas_covered =  '\{${body.areas_covered.join(", ")}\}', 
+availability =  '\{${body.availability.join(", ")}\}', 
+category =  '${body.category}'::service_category_name
+WHERE
+id= ${parameters.service_id}
+`;
+
+  try {
+    await pool.query(sqlQuery);
+
+    return res.status(200).json({ status: true, message: "Success" });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+
+  
+})
 
 // Routes for a specific service id
 router.use('/:serviceId', serviceIdRoute)
