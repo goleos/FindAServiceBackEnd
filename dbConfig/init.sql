@@ -1,4 +1,4 @@
-CREATE TYPE update_status AS ENUM ('pending', 'completed')
+CREATE TYPE update_status AS ENUM ('pending', 'completed');
 
 CREATE TABLE provider (
   id SERIAL PRIMARY KEY
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS customer (
 , first_name VARCHAR(255) NOT NULL
 , last_name VARCHAR(255) NOT NULL
 , email VARCHAR(255) UNIQUE NOT NULL
-, password VARCHAR(255) 
+, password VARCHAR(255)
 , profile_image VARCHAR(255)
 , google_sub VARCHAR(255)
 , email_verified BOOLEAN DEFAULT false
@@ -61,38 +61,38 @@ CREATE TABLE IF NOT EXISTS service (
 
 CREATE TABLE  profile_update (
   id SERIAL PRIMARY KEY
-, provider_id INT REFERENCES provider (id) 
-    ON UPDATE CASCADE 
+, provider_id INT REFERENCES provider (id)
+    ON UPDATE CASCADE
     ON DELETE CASCADE
 , reason VARCHAR(255) NOT NULL
 , status update_status NOT NULL
 , created_at TIMESTAMPTZ NOT NULL
-)
+);
 
 CREATE TABLE  service_request (
   id SERIAL PRIMARY KEY
-, provider_id INT REFERENCES provider (id) 
-    ON UPDATE CASCADE 
+, provider_id INT REFERENCES provider (id)
+    ON UPDATE CASCADE
     ON DELETE CASCADE
-, customer_id INT REFERENCES customer (id) 
-    ON UPDATE CASCADE 
+, customer_id INT REFERENCES customer (id)
+    ON UPDATE CASCADE
     ON DELETE CASCADE
-, service_id INT REFERENCES service (id) 
-    ON UPDATE CASCADE 
+, service_id INT REFERENCES service (id)
+    ON UPDATE CASCADE
     ON DELETE CASCADE
 , description VARCHAR(255) NOT NULL
 , status service_request_status NOT NULL
 , customer_address VARCHAR(255) NOT NULL
 , booking_time DATE NOT NULL
 , created_at TIMESTAMPTZ NOT NULL
-)
+);
 
 CREATE TABLE  service_request_update (
   id SERIAL PRIMARY KEY
-, service_request_id INT REFERENCES service_request (id) 
-    ON UPDATE CASCADE 
+, service_request_id INT REFERENCES service_request (id)
+    ON UPDATE CASCADE
     ON DELETE CASCADE
 , reason VARCHAR(255) NOT NULL
 , status update_status NOT NULL
 , created_at TIMESTAMPTZ NOT NULL
-)
+);
