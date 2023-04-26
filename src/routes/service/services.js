@@ -82,6 +82,8 @@ router.post("/update", authenticateToken, async (req, res, next) => {
     return res.status(400).json({ status: false, message: "You didn't use the 'service_id' parameter" });
   }
 
+  // console.log(parameters.service_id)
+
   //Todo: check that this service is actually owned by the provider
 
   if (user.status !== 'provider') {
@@ -110,6 +112,34 @@ id= ${parameters.service_id}
   }
 
   
+})
+
+router.delete("/delete", authenticateToken, async (req, res, next) => {
+  const user = req.user
+  const parameters = req.query;
+
+  if (!parameters.service_id) {
+    return res.status(400).json({ status: false, message: "You didn't use the 'service_id' parameter" });
+  }
+
+  //Todo: check that this service is actually owned by the provider
+
+  if (user.status !== 'provider') {
+    return res.status(401).json({ status: false, message: "Unauthorised" });
+  }
+
+  let sqlQuery = `DELETE FROM public.service WHERE id = ${parameters.service_id}`;
+
+  try {
+    await pool.query(sqlQuery);
+
+    return res.status(200).json({ status: true, message: "Success" });
+  } catch (err) {
+    res.status(500);
+    next(err);
+  }
+
+
 })
 
 // Routes for a specific service id
