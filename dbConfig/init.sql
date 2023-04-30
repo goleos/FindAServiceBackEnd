@@ -41,7 +41,8 @@ CREATE TYPE service_request_status AS ENUM (
   'request_further_details',
   'rejected',
   'pending',
-  'completed'
+  'completed',
+  'withdrawn'
 );
 
 CREATE TABLE IF NOT EXISTS service (
@@ -53,13 +54,14 @@ CREATE TABLE IF NOT EXISTS service (
   areas_covered VARCHAR(200)[],
   availability VARCHAR(100)[],
   category service_category_name NOT NULL,
+  service_images VARCHAR(255) [],
   is_available BOOLEAN DEFAULT true,
   CONSTRAINT fk_provider
     FOREIGN KEY (provider_id)
       REFERENCES provider (id)
 );
 
-CREATE TABLE  profile_update (
+CREATE TABLE profile_update (
   id SERIAL PRIMARY KEY
 , provider_id INT REFERENCES provider (id)
     ON UPDATE CASCADE

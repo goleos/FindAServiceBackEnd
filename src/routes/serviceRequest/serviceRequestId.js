@@ -71,7 +71,7 @@ router.put('/status', authenticateToken, async (req, res, next) => {
 
   const user = req.user;
 
-  if (user.status !== 'provider') {
+  if (user.status !== 'customer' && status === 'withdrawn') {
     return normalMsg(res, 400, false, "Unauthorised")
   }
 

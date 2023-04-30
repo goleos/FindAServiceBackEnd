@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const fileUpload = require('express-fileupload')
 
 // Require Middleware
 const middlewares = require('./middlewares');
@@ -20,6 +21,8 @@ const app = express();
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(fileUpload())
 
 app.get('/', (req, res) => {
   res.json({
