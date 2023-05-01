@@ -13,6 +13,7 @@ const adminRoute = require('./routes/admin/admin');
 const serviceRoute = require('./routes/service/services');
 const profileUpdateRoute = require('./routes/profileUpdate/profileUpdate');
 const serviceRequestRoute = require('./routes/serviceRequest/serviceRequest');
+const reviewRoute = require('./routes/review/review');
 
 // Create app
 const app = express();
@@ -37,6 +38,7 @@ app.use('/admin', adminRoute);
 app.use('/service', serviceRoute);
 app.use('/profileUpdate', profileUpdateRoute);
 app.use('/serviceRequest', serviceRequestRoute);
+app.use('/review', reviewRoute);
 
 // Error handling middleware
 app.use(middlewares.errorHandler);
