@@ -98,3 +98,17 @@ CREATE TABLE  service_request_update (
 , status update_status NOT NULL
 , created_at TIMESTAMPTZ NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS review(
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customer (id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE,
+  service_id INT REFERENCES service (id)
+      ON UPDATE CASCADE
+      ON DELETE CASCADE,
+  title VARCHAR(70) NOT NULL,
+  description TEXT NOT NULL,
+--   rating goes from 1 to 5
+  rating INT NOT NULL
+);
