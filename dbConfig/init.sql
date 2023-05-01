@@ -110,5 +110,6 @@ CREATE TABLE IF NOT EXISTS review(
   title VARCHAR(70) NOT NULL,
   description TEXT NOT NULL,
 --   rating goes from 1 to 5
-  rating INT NOT NULL
+  rating INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
