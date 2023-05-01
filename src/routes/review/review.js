@@ -35,5 +35,28 @@ router.post("/create", authenticateToken, async (req, res, next) => {
     }
 });
 
+router.get("/reviews", authenticateToken, async (req, res, next) => {
+    // const user = req.user;
+    const parameters = req.query;
+
+    if (!parameters.service_id) {
+        return res.status(400).json({ status: false, message: "You didn't use the 'service_id' parameter" });
+    }
+
+    let sqlQuery =
+        'SELECT review.id, review.customer_id AS "customerID", review.service_id AS "serviceID", review.title, review.description, review.rating'  +
+        " FROM review";
+
+
+    try {
+        const data = await pool.query(sqlQuery);
+
+        return res.status(200).json(data.rows);
+    } catch (err) {
+        res.status(500);
+        next(err);
+    }
+});
+
 
 module.exports = router;
