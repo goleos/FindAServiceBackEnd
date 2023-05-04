@@ -3,7 +3,6 @@ require('dotenv').config();
 const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const { loginMsg } = require('../../helpers/returnMsg');
-const { pool } = require('../../config/postgresConfig');
 
 // Login the admin
 router.post('/login', async (req, res, next) => {

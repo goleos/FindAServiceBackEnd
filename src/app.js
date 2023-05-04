@@ -14,6 +14,7 @@ const serviceRoute = require('./routes/service/services');
 const profileUpdateRoute = require('./routes/profileUpdate/profileUpdate');
 const serviceRequestRoute = require('./routes/serviceRequest/serviceRequest');
 const reviewRoute = require('./routes/review/review');
+const notificationRoute = require('./routes/notification/notification');
 
 // Create app
 const app = express();
@@ -23,7 +24,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(fileUpload())
+app.use(fileUpload());
 
 app.get('/', (req, res) => {
   res.json({
@@ -39,6 +40,7 @@ app.use('/service', serviceRoute);
 app.use('/profileUpdate', profileUpdateRoute);
 app.use('/serviceRequest', serviceRequestRoute);
 app.use('/review', reviewRoute);
+app.use('/notification', notificationRoute);
 
 // Error handling middleware
 app.use(middlewares.errorHandler);

@@ -1,6 +1,6 @@
 CREATE TYPE update_status AS ENUM ('pending', 'completed');
 
-CREATE TABLE provider (
+CREATE TABLE IF NOT EXISTS provider (
   id SERIAL PRIMARY KEY
 , first_name VARCHAR(255) NOT NULL
 , last_name VARCHAR(255) NOT NULL
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS service (
       REFERENCES provider (id)
 );
 
-CREATE TABLE profile_update (
+CREATE TABLE IF NOT EXISTS profile_update (
   id SERIAL PRIMARY KEY
 , provider_id INT REFERENCES provider (id)
     ON UPDATE CASCADE
@@ -71,7 +71,7 @@ CREATE TABLE profile_update (
 , created_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE  service_request (
+CREATE TABLE IF NOT EXISTS service_request (
   id SERIAL PRIMARY KEY
 , provider_id INT REFERENCES provider (id)
     ON UPDATE CASCADE
@@ -89,7 +89,7 @@ CREATE TABLE  service_request (
 , created_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE  service_request_update (
+CREATE TABLE IF NOT EXISTS service_request_update (
   id SERIAL PRIMARY KEY
 , service_request_id INT REFERENCES service_request (id)
     ON UPDATE CASCADE
@@ -112,4 +112,19 @@ CREATE TABLE IF NOT EXISTS review(
 --   rating goes from 1 to 5
   rating INT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TYPE notification_type AS ENUM ('service_completed', 'new_service');
+
+CREATE TABLE IF NOT EXISTS notification (
+  id SERIAL PRIMARY KEY
+, provider_id INT REFERENCES provider (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, customer_id INT REFERENCES customer (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
+, date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+, type notification_type NOT NULL
+, read BOOLEAN DEFAULT false
 );

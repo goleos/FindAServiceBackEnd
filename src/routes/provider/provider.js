@@ -23,6 +23,8 @@ router.post('/register', async (req, res, next) => {
     address
   } = req.body;
 
+  console.log("hi");
+
 
   // Check passwords match
   if (password !== confirmPassword) {

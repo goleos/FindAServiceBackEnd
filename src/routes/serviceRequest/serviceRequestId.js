@@ -76,6 +76,20 @@ router.put('/status', authenticateToken, async (req, res, next) => {
   }
 
   try {
+
+    // When the request is marked as completed notify customer
+    if ( status === 'completed') {
+      const request = await pool.query(
+        'SELECT customer_id AS "customerId" FROM service_request WHERE id = $1',
+        [serviceRequestId]);
+
+      if (request.rows.length > 0) {
+        await pool.query(
+          'INSERT INTO notification (provider_id, customer_id, type) VALUES ($1, $2, $3)',
+          [user.id, request.rows[0].customerId, 'service_completed']);
+      }
+    }
+
     await pool.query(
       'UPDATE service_request SET status = $1 WHERE id = $2',
       [status, serviceRequestId]
