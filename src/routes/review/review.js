@@ -2,6 +2,7 @@ const { authenticateToken } = require("../../middlewares");
 const { pool } = require("../../config/postgresConfig");
 require("dotenv").config();
 const router = require("express").Router();
+const reviewIdRoute = require('./reviewId');
 
 // creating a review by customer.
 router.post("/create", authenticateToken, async (req, res, next) => {
@@ -53,7 +54,7 @@ router.get("/reviews", authenticateToken, async (req, res, next) => {
   }
 
   let sqlQuery =
-    'SELECT review.id, review.customer_id AS "customerID", review.service_id AS "serviceID", review.title, review.description, review.rating, review.created_at AS "createdAt", first_name AS "customerFirstName", last_name AS "customerLastName"' +
+    'SELECT review.id, review.customer_id AS "customerID", review.service_id AS "serviceID", review.title, review.description, review.rating, review.created_at AS "createdAt", first_name AS "customerFirstName", last_name AS "customerLastName", profile_image AS "customerProfileImage"' +
     " FROM review" +
     " JOIN customer c on c.id = review.customer_id" +
     " WHERE customer_id=" +
@@ -68,5 +69,8 @@ router.get("/reviews", authenticateToken, async (req, res, next) => {
     next(err);
   }
 });
+
+// Routes for the updates of a service request
+router.use('/:reviewId', reviewIdRoute)
 
 module.exports = router;

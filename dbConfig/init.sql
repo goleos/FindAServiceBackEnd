@@ -124,6 +124,9 @@ CREATE TABLE IF NOT EXISTS notification (
 , customer_id INT REFERENCES customer (id) 
     ON UPDATE CASCADE 
     ON DELETE CASCADE
+, service_id INT REFERENCES service (id) 
+    ON UPDATE CASCADE 
+    ON DELETE CASCADE
 , date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 , type notification_type NOT NULL
 , read BOOLEAN DEFAULT false
