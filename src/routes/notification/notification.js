@@ -16,7 +16,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
 
   try {
     const data = await pool.query(
-      'SELECT notification.id, notification.provider_id AS "providerId", notification.customer_id AS "customerId", notification.date, notification.type, notification.read, provider.first_name AS "providerFirstName", provider.last_name AS "providerLastName", provider.profile_image AS "providerProfileImage" FROM notification INNER JOIN provider ON notification.provider_id = provider.id WHERE customer_id = $1 ORDER BY notification.date DESC',
+      'SELECT notification.id, notification.provider_id AS "providerId", notification.customer_id AS "customerId", notification.service_id AS "serviceId", notification.date, notification.type, notification.read, provider.first_name AS "providerFirstName", provider.last_name AS "providerLastName", provider.profile_image AS "providerProfileImage" FROM notification INNER JOIN provider ON notification.provider_id = provider.id WHERE customer_id = $1 ORDER BY notification.date DESC',
       [user.id]);
 
     return res.status(200).json(data.rows);

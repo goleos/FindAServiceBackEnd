@@ -65,6 +65,7 @@ router.post("/create", authenticateToken, async (req, res, next) => {
     return res.status(401).json({ status: false, message: "Unauthorised" });
   }
 
+  // Add service
   const body = req.body;
 
   let sqlQuery = `INSERT INTO public.service (id, title, description, provider_id, price, areas_covered,
@@ -78,10 +79,21 @@ router.post("/create", authenticateToken, async (req, res, next) => {
  '\{${body.availability.join(", ")}\}', 
  '${body.category}'::service_category_name, DEFAULT) RETURNING id`;
 
-  console.log(sqlQuery);
-
   try {
     const newService = await pool.query(sqlQuery);
+
+    // Notify all the customer's that have 
+    // used their services in the past
+    const customers = await pool.query(
+      'SELECT DISTINCT customer_id AS "customerId" FROM service_request WHERE provider_id = $1',
+      [user.id]);
+
+    for (let row of customers.rows) {
+     
+      await pool.query(
+        'INSERT INTO notification (provider_id, customer_id, service_id, type) VALUES ($1, $2, $3, $4)',
+        [user.id, row.customerId, newService.rows[0].id, 'new_service']);
+    }
 
     return res.status(200).json(newService.rows[0].id);
   } catch (err) {
