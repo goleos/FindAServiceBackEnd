@@ -2,7 +2,7 @@ const { authenticateToken } = require("../../middlewares");
 const { pool } = require("../../config/postgresConfig");
 require("dotenv").config();
 const router = require("express").Router();
-const {SERVICE_IMAGE} = require("../../helpers/contants")
+// const {SERVICE_IMAGE} = require("../../helpers/contants")
 
 const serviceIdRoute = require('./serviceId');
 
@@ -15,7 +15,7 @@ router.get("/services", authenticateToken, async (req, res, next) => {
     'SELECT service.id, service.title, provider_id AS "providerID", service.description, service.price, service.areas_covered AS "areasCovered", service.availability, service.category, service.service_images AS "serviceImages", service.is_available AS "isAvailable", provider.first_name AS "providerFirstName", provider.last_name AS "providerLastName", provider.profile_image AS "providerProfileImage", ROUND(AVG(review.rating), 2) AS "avgRating"' +
     " FROM service INNER JOIN provider ON service.provider_id = provider.id LEFT JOIN review ON service.id = review.service_id";
 
-  sqlQuery += ' WHERE provider.is_approved = true '
+  sqlQuery += ' WHERE provider.is_approved = true AND service.is_available = true'
 
   if (parameters.provider) {
     sqlQuery += ` AND service.provider_id = '${parameters.provider}'`;
