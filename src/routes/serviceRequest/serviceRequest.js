@@ -56,7 +56,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
     let sqlQuery = `SELECT service_request.id, service_request.description, service_request.status, service_request.customer_address AS "customerAddress", service_request.booking_time AS "bookingTime", service_request.created_at AS "createdAt"`
     
     if (!parameters.serviceId) {
-      sqlQuery += ', service.title, service.price, service.category'
+      sqlQuery += ', service.title, service.price, service.category, service_id'
     }
 
     if (user.status === 'customer') {
