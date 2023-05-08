@@ -57,7 +57,7 @@ router.get("/reviews", authenticateToken, async (req, res, next) => {
     'SELECT review.id, review.customer_id AS "customerID", review.service_id AS "serviceID", review.title, review.description, review.rating, review.created_at AS "createdAt", first_name AS "customerFirstName", last_name AS "customerLastName", profile_image AS "customerProfileImage"' +
     " FROM review" +
     " JOIN customer c on c.id = review.customer_id" +
-    " WHERE customer_id=" +
+    " WHERE service_id=" +
     parameters.service_id;
 
   try {
