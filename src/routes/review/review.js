@@ -1,10 +1,11 @@
+// /review
 const { authenticateToken } = require("../../middlewares");
 const { pool } = require("../../config/postgresConfig");
 require("dotenv").config();
 const router = require("express").Router();
 const reviewIdRoute = require('./reviewId');
 
-// creating a review by customer.
+// Creating a review by customer.
 router.post("/create", authenticateToken, async (req, res, next) => {
   const user = req.user;
   const body = req.body;
@@ -42,6 +43,7 @@ router.post("/create", authenticateToken, async (req, res, next) => {
   }
 });
 
+// Get all reviews
 router.get("/reviews", authenticateToken, async (req, res, next) => {
   // const user = req.user;
   const parameters = req.query;

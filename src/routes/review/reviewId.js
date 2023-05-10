@@ -23,7 +23,7 @@ router.delete('/', authenticateToken, async (req, res, next) => {
       [reviewId]
     );
 
-    return res.normalMsg(res, 200, true, 'OK')
+    return normalMsg(res, 200, true, 'OK')
   } catch (err) {
     res.status(500);
     next(err)

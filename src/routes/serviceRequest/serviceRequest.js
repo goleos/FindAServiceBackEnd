@@ -49,7 +49,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
   const user = req.user;
 
   if (user.status === 'admin') {
-    return normalMsg(res, 400, false, "Unauthorised")
+    return res.status(200).json([]);
   }
 
   try {
@@ -75,7 +75,7 @@ router.get('/', authenticateToken, async (req, res, next) => {
       if (!parameters.serviceId) {
         sqlQuery += ' INNER JOIN service ON service_request.service_id = service.id'
       }
-      
+
       sqlQuery += ` WHERE service_request.provider_id = ${user.id}`
     }
 

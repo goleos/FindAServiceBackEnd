@@ -1,4 +1,11 @@
-# FindAServiceBackEnd
+# COMP6251 Find a Service Web Application
+
+
+## Team Members
+- Mihaela Florea (mf2u19@soton.ac.uk)
+- Leonid Goldberg (lg1n22@soton.ac.uk)
+- Boyang Wang (bw10g22@soton.ac.uk)
+- Jianyu Sun (js5g22@soton.ac.uk)
 
 ## Database Modelling
 If you paste the [`db_model.dbml`](https://github.com/LeonidGoldberg/FindAServiceBackEnd/blob/main/db_model.dbml) file into [this page](https://dbdiagram.io/d), it will allow you to visually view and edit the ERD diagram. But don't sign up on the website or save the file on the website because that would make it public. I think we can later fix that if we need to.
@@ -58,9 +65,58 @@ npm run start:dev
 └── README.md
 ```
 
-## Routes (so far)
+## Routes
 
 ### Providers
 - GET     /provider/currentProvider
 - POST    /provider/login
 - POST    /provider/register
+- PUT     /provider/editProfile
+- POST    /provider/editProfile/upload
+- GET     /provider/unapproved
+- GET     /provider/:providerId
+- PUT     /provider/:providerId/approve
+- PUT     /provider/:providerId/reject
+
+### Providers Profile Updates
+- PUT     /profileUpdate/:updateId/changeStatus
+- GET     /profileUpdate/:providerId
+- POST    /profileUpdate/:providerId
+
+### Customers
+- POST    /customer/register
+- POST    /customer/login
+- POST    /customer/googleLogin
+- GET     /customer/verify/:customerId/:token
+- GET     /customer/currentCustomer
+
+### Notifications
+- GET     /notification
+- POST    /notification/read
+- GET     /notification/unreadCount
+
+### Admin
+- POST    /admin/login
+
+### Reviews
+- POST    /review/create
+- GET     /review/reviews
+- DELETE  /review/:reviewId
+
+### Services
+- GET     /service/:serviceId
+- POST    /service/:serviceId/upload
+- GET     /service/services
+- POST    /service/create
+- POST    /service/update
+- DELETE  /service/delete
+
+### Service Requests
+- GET     /serviceRequest
+- POST    /serviceRequest/:serviceId
+- GET     /serviceRequest/:serviceRequestId
+- PUT     /serviceRequest/:serviceRequestId
+- PUT     /serviceRequest/:serviceRequestId/status
+- PUT     /serviceRequest/update/:updateId/changeStatus
+- GET     /serviceRequest/update/:serviceRequestId
+- POST    /serviceRequest/update/:serviceRequestId

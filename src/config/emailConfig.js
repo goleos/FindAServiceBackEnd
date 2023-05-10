@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 
+// Sends verification email
 const sendEmail = async (email, subject, message) => {
   try {
     const transporter = nodemailer.createTransport({
