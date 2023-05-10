@@ -1,3 +1,4 @@
+// Creates the verification email HTML template
 const draftEmail = (name, link) => {
   return `<body style="font-family: sans-serif">
   <p>Dear ${name},</p>

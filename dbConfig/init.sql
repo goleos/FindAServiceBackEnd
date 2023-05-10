@@ -1,4 +1,27 @@
+-- Script for initialising the database
+
 CREATE TYPE update_status AS ENUM ('pending', 'completed');
+
+CREATE TYPE service_category_name AS ENUM (
+  'Cleaning',
+  'Babysitting',
+  'Pest Control',
+  'Plumbing',
+  'Electrical Repairs',
+  'Beauty',
+  'Miscellaneous'
+);
+
+CREATE TYPE service_request_status AS ENUM (
+  'accepted',
+  'request_further_details',
+  'rejected',
+  'pending',
+  'completed',
+  'withdrawn'
+);
+
+CREATE TYPE notification_type AS ENUM ('service_completed', 'new_service');
 
 CREATE TABLE IF NOT EXISTS provider (
   id SERIAL PRIMARY KEY
@@ -23,26 +46,6 @@ CREATE TABLE IF NOT EXISTS customer (
 , google_sub VARCHAR(255)
 , email_verified BOOLEAN DEFAULT false
 , email_token VARCHAR(255)
-);
-
-
-CREATE TYPE service_category_name AS ENUM (
-  'Cleaning',
-  'Babysitting',
-  'Pest Control',
-  'Plumbing',
-  'Electrical Repairs',
-  'Beauty',
-  'Miscellaneous'
-);
-
-CREATE TYPE service_request_status AS ENUM (
-  'accepted',
-  'request_further_details',
-  'rejected',
-  'pending',
-  'completed',
-  'withdrawn'
 );
 
 CREATE TABLE IF NOT EXISTS service (
@@ -113,8 +116,6 @@ CREATE TABLE IF NOT EXISTS review(
   rating INT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TYPE notification_type AS ENUM ('service_completed', 'new_service');
 
 CREATE TABLE IF NOT EXISTS notification (
   id SERIAL PRIMARY KEY
