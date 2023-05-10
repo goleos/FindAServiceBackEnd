@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS service_request (
 , service_id INT REFERENCES service (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE
-, description VARCHAR(255) NOT NULL
+, description TEXT NOT NULL
 , status service_request_status NOT NULL
 , customer_address VARCHAR(255) NOT NULL
 , booking_time DATE NOT NULL
