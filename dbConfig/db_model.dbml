@@ -1,5 +1,31 @@
-// only includes basic features for now
-// TODO: Look into how referential integrity can be represented in dbml
+Enum update_status {
+  pending
+  completed
+}
+
+Enum service_request_status {
+  accepted
+  request_further_details
+  rejected
+  pending
+  completed
+  withdrawn
+}
+
+Enum service_category_name {
+  Cleaning
+  Babysitting
+  Pest Control
+  plumbing
+  Electrical Repairs
+  Beauty
+  Miscellaneous
+}
+
+Enum notification_type {
+  service_completed
+  new_service
+}
 
 Table provider {
   id integer [pk, not null]
@@ -32,7 +58,7 @@ Table service {
   description varchar [not null]
   provider_id integer [ref: > provider.id]
   price decimal(6, 2) [note: 'we assume currency is GBP']
-  area varchar [note: 'city']
+  areas_covered varchar [note: 'city']
   availability varchar [note: 'eg. weekdays, 24/7']
   category service_category_title [not null]
   is_available boolean [not null, default: false]
@@ -40,13 +66,14 @@ Table service {
 
 Table service_request {
   id integer [pk, not null]
-  service_category service_category_title [not null]
   description varchar [not null]
-  provider_id integer [ref: > provider.id, note: 'This provider must be an approved provider']
+  provider_id integer [ref: > provider.id]
   customer_id integer [ref: > customer.id]
+  service_id integer [ref: > service.id]
   customer_address varchar [not null]
   booking_time datetime [not null]
   status service_request_status [not null]
+  created_at timestamp [not null]
 }
 
 Table review {
@@ -56,6 +83,7 @@ Table review {
   rating integer [not null, note: 'from 1 to 5']
   title varchar
   description varchar
+  created_at timestamp [not null, default: current_timestamp]
 }
 
 Table profile_update {
@@ -75,38 +103,10 @@ Table service_request_update {
 
 Table notification {
   id integer [pk, not null]
+  provider_id integer [ref: > provider.id]
   customer_id integer [ref: > customer.id]
   service_id integer [ref: > service.id]
-  text varchar [not null]
   date timestamp [not null]
+  type notification_type [not null]
   read boolean [not null, default: false]
-}
-
-Enum update_status {
-  pending
-  completed
-}
-
-Enum service_request_status {
-  accepted
-  request_further_details
-  rejected
-  pending
-  completed
-}
-
-Enum service_category_title {
-  cleaning
-  babysitting
-  pest_control
-  plumbing
-  electrical_repairs
-  beauty
-  other
-}
-
-Table photo {
-  id integer [pk, not null]
-  service_id integer [ref: > service.id]
-  file_path varchar [not null, unique]
 }

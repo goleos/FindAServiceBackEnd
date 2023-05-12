@@ -37,7 +37,7 @@ router.get("/services", authenticateToken, async (req, res, next) => {
   if (parameters.searchQuery) {
     const query = parameters.searchQuery;
 
-    sqlQuery += ` AND (lower(provider.first_name) LIKE lower('%${query}%') OR lower(provider.last_name) LIKE lower('%${query}%') OR lower(service.title) LIKE lower('%${query}%') OR lower(service.description) LIKE lower('%${query}%') OR service.category = '${query}'`;
+    sqlQuery += ` AND (lower(provider.first_name) LIKE lower('%${query}%') OR lower(provider.last_name) LIKE lower('%${query}%') OR lower(service.title) LIKE lower('%${query}%') OR lower(service.description) LIKE lower('%${query}%')`;
 
     sqlQuery += ` OR (0 < (SELECT COUNT(*) FROM unnest(areas_covered) AS area WHERE lower(area) LIKE lower('%${query}%')))`
 
